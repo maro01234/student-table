@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory() as directory:
         else:
             raise RuntimeError("Server did not become ready")
         for path, content_type, marker in [
-            ("/", "text/html", "生徒別の平均点"),
+            ("/", "text/html", "章ごとの学習内容と理解度"),
             ("/style.css", "text/css", ".sheet"),
             ("/app.js", "text/javascript", "async function load"),
         ]:
@@ -47,11 +47,12 @@ with tempfile.TemporaryDirectory() as directory:
                 assert response.status == 200
                 assert response.headers.get_content_type() == content_type
                 assert marker in response.read().decode("utf-8")
-        with urlopen(base + "/api/students") as response:
-            students = json.load(response)
-            assert len(students) == 5
-            assert students[0] == {"name": "佐藤 花子", "score": 85.5}
-            assert all(0 <= row["score"] <= 100 for row in students)
+        with urlopen(base + "/api/chapters") as response:
+            chapters = json.load(response)
+            assert [row["chapter"] for row in chapters] == list(range(1, 9))
+            assert chapters[0]["title"] == "Javaの概要と簡単なJavaプログラムの作成"
+            assert chapters[7]["title"] == "模擬問題②"
+            assert all(row["understanding"] is None and len(row["topics"]) >= 3 for row in chapters)
         with urlopen(Request(base + "/", method="HEAD")) as response:
             assert response.status == 200 and response.read() == b""
         for path, method, expected in [("/missing", "GET", 404), ("/", "POST", 405),

@@ -3,31 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>生徒別の平均点</title>
+  <title>Java Silver 学習内容と理解度</title>
   <link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
   <main>
-    <div class="eyebrow">STUDENT SCORE TABLE</div>
-    <h1>生徒別の平均点</h1>
-    <p class="intro">生徒名と平均点を、表で見やすく。セルを選んで編集できます。</p>
-    <div class="toolbar"><span id="count">読み込み中…</span><span>100点満点 · 小数第1位表示</span></div>
+    <div class="eyebrow">JAVA SE 17 SILVER · STUDY TRACKER</div>
+    <h1>章ごとの学習内容と理解度</h1>
+    <p class="intro">第1章から第8章まで、押さえる仕様を確認しながら理解度をチェック。</p>
+    <div class="toolbar"><span id="count">読み込み中…</span><span>理解度 0〜100％ · 自己評価</span></div>
     <div class="sheet">
-      <table aria-label="生徒名と平均点">
+      <table aria-label="Java Silver 第1章から第8章の学習内容と理解度">
         <thead><tr>
-          <th scope="col" class="row-number">#</th>
-          <th scope="col" aria-sort="none"><button id="sort-name" type="button">生徒名 <span aria-hidden="true">↕</span></button></th>
-          <th scope="col" aria-sort="none"><button id="sort-score" type="button">平均点 <span aria-hidden="true">↕</span></button></th>
+          <th scope="col" class="chapter-number" aria-sort="none"><button id="sort-chapter" type="button">章 <span aria-hidden="true">↕</span></button></th>
+          <th scope="col" class="content-heading">内容・押さえるポイント</th>
+          <th scope="col" class="understanding-heading" aria-sort="none"><button id="sort-understanding" type="button">理解度（％） <span aria-hidden="true">↕</span></button></th>
         </tr></thead>
-        <tbody id="students"></tbody>
+        <tbody id="chapters"></tbody>
       </table>
     </div>
-    <p id="status" role="status" aria-live="polite">データを読み込んでいます。</p>
+    <p id="status" role="status" aria-live="polite">学習内容を読み込んでいます。</p>
     <button id="retry" type="button" hidden>再読み込み</button>
-    <p class="note">列名を押すと並べ替えられます。編集内容はこの画面だけに反映され、再読み込みすると元に戻ります。</p>
+    <p id="understanding-help" class="note">理解度は未入力から開始します。0％＝これから学習、50％＝半分程度理解、100％＝自分で説明できる、を目安に入力してください。</p>
+    <p class="note">章・理解度の列名で並べ替えられます。編集内容はこの画面のみで、再読み込みすると未入力に戻ります。</p>
     <noscript>この表の表示と編集にはJavaScriptを有効にしてください。</noscript>
-    <footer>Java 17 · サンプルの計算済み平均点を表示</footer>
+    <footer>『徹底攻略Java SE 17 Silver問題集［1Z0-825］対応』の章立てに沿った学習メモ。第7・8章は模擬問題による横断確認です。</footer>
   </main>
 </body>
 </html>
