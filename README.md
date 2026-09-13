@@ -1,49 +1,76 @@
-# 生徒名と平均点を表で表示するJavaプログラム
+# 生徒名と平均点の表（Java 17）
 
-Java標準のSwing（`JTable`）を使って、Excelのような罫線付きの表を別ウィンドウで表示します。Excelのインストールや追加ライブラリは不要です。Java 17以降のJDKと、デスクトップ画面のある環境で利用できます。
+Java標準ライブラリのHTTPサーバーで、ブラウザーにExcelのような罫線付きの表を表示します。
 
-## 実行方法
+- 生徒名・平均点の編集（平均点は0〜100）
+- 名前順・平均点の数値順で並べ替え
+- 小数第1位まで表示
+- 編集はブラウザーの現在の画面内のみ。サーバーには保存されず、再読み込みするとサンプルに戻ります。
 
-VS Codeでこの`student-table`フォルダーを開き、ターミナルで次を実行します。
+平均点は計算済みのサンプルです。科目別点数からの自動計算やExcelファイル出力は含みません。
+
+## ローカルでWeb版を実行
+
+JDK 17以降をインストールし、このフォルダーで実行します。
+
+```sh
+java StudentScoreWeb.java
+```
+
+ブラウザーで [http://localhost:8080](http://localhost:8080) を開きます。終了はターミナルでCtrl+Cです。
+
+ポートを変える場合（macOS/Linux）：
+
+```sh
+PORT=10000 java StudentScoreWeb.java
+```
+
+## Renderへのデプロイ
+
+このリポジトリをWeb Serviceとして接続し、次を設定します。
+
+| 設定 | 値 |
+|---|---|
+| Language / Runtime | Docker |
+| Branch | main |
+| Root Directory | 空欄（リポジトリ直下） |
+| Dockerfile Path | ./Dockerfile |
+| Docker Build Context Directory | . |
+| Docker Command | 空欄（DockerfileのCMDを使用） |
+| Health Check Path | /healthz |
+
+`Dockerfile`がJava 17でコンパイルし、画面のない環境でWebサーバーを起動します。サーバーは`0.0.0.0`で待ち受け、Renderが指定する環境変数`PORT`を使用します。既存サービスの修正に、新しいサービスの作成や有料プランへの変更は不要です。
+
+変更を接続ブランチにpushし、自動デプロイが無効なら「Manual Deploy → Deploy latest commit」を実行します。
+
+初回の失敗原因は`Dockerfile`の欠落でした。従来のSwing版はデスクトップ画面用であり、RenderのWeb ServiceとしてHTTPを提供できないため、Web版の起動クラスは`StudentScoreWeb`です。
+
+参考：[Render Web Services](https://render.com/docs/web-services)、[Docker on Render](https://render.com/docs/docker)
+
+## ファイル構成
+
+| ファイル | 役割 |
+|---|---|
+| StudentScoreWeb.java | HTTPサーバー、サンプルデータのJSON API、ヘルスチェック |
+| public/index.html | 表のHTML |
+| public/app.js | セルの編集・検証・並べ替え |
+| public/style.css | 表の見た目 |
+| Dockerfile | Render用のビルド・起動設定 |
+| StudentScoreTable.java | 元のSwing版（ローカルのデスクトップ専用） |
+| tests/smoke_test.py | JARでの起動とHTTP応答の検証 |
+
+## 検証
+
+Python 3とJDK 17以降で実行します。
+
+```sh
+python3 tests/smoke_test.py
+```
+
+一時ディレクトリでJARを作り、画面なし・非標準ポート・プロジェクト外の作業ディレクトリで起動します。HTML、CSS、JavaScript、サンプルAPI、ヘルスチェック、HEAD、404、405を確認します。
+
+元のSwing版を起動する場合：
 
 ```sh
 java StudentScoreTable.java
 ```
-
-コンパイルと実行を分ける場合は、次の順番で実行します。
-
-```sh
-javac -encoding UTF-8 --release 17 StudentScoreTable.java
-java StudentScoreTable
-```
-
-## 表の内容
-
-| 生徒名 | 平均点（100点満点） |
-|---|---:|
-| 佐藤 花子 | 85.5 |
-| 鈴木 太郎 | 72.0 |
-| 高橋 美咲 | 91.3 |
-| 田中 健 | 68.7 |
-| 伊藤 葵 | 88.0 |
-
-- セルをダブルクリックすると編集できます。Enterで確定します。
-- 生徒名は空欄にできません。平均点には0〜100の数値を入力します。
-- 数値以外を入力して編集を確定できない場合は、入力を修正するかEscで取り消してください。
-- 列名をクリックすると昇順・降順で並べ替えられます。平均点は数値として比較します。
-- 平均点は小数第1位まで表示します。入力した数値自体はその精度のまま保持します。
-- 画面で編集した内容は保存されず、再起動するとサンプルに戻ります。
-
-平均点は計算済みの値を表示するサンプルです。科目別の点数からの自動計算や、Excelファイル（`.xlsx`）への出力は含みません。
-
-## コードの見どころ
-
-- `students`：生徒名と平均点を保持する2次元配列。初期データを変えるときはここを編集します。
-- `StudentTableModel`：行数・列数・セルの値・編集ルールを管理します。
-- `JTable`：データを表として表示します。
-- `getColumnClass`：名前は`String`、平均点は`Double`として扱います。
-- `DefaultTableCellRenderer`：平均点の表示形式を整えます。
-- `JFrame`：表を表示するウィンドウです。
-- `SwingUtilities.invokeLater`：Swingの画面操作用スレッドでウィンドウを作成します。
-
-コードブロックを含むMarkdownは説明用です。実行するプログラムは`StudentScoreTable.java`です。
