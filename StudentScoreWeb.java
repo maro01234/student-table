@@ -32,7 +32,7 @@ public class StudentScoreWeb {
             executor.shutdown();
         }));
         server.start();
-        System.out.println("Student table listening on 0.0.0.0:" + port);
+        System.out.println("Java Silver study table listening on 0.0.0.0:" + port);
     }
 
     private static void handle(HttpExchange exchange) throws IOException {
@@ -48,13 +48,18 @@ public class StudentScoreWeb {
                 send(exchange, 200, "text/plain", "ok".getBytes(StandardCharsets.UTF_8));
                 return;
             }
-            if (path.equals("/api/students")) {
+            if (path.equals("/api/chapters")) {
                 String json = """
-                        [{"name":"佐藤 花子","score":85.5},
-                         {"name":"鈴木 太郎","score":72.0},
-                         {"name":"高橋 美咲","score":91.3},
-                         {"name":"田中 健","score":68.7},
-                         {"name":"伊藤 葵","score":88.0}]
+                        [
+                          {"chapter":1,"title":"Javaの概要と簡単なJavaプログラムの作成","topics":["javac・javaによるコンパイルと実行、ソースファイルモード","mainメソッドとコマンドライン引数","パッケージ宣言・import・完全修飾クラス名・クラスパス"],"understanding":null},
+                          {"chapter":2,"title":"Javaの基本データ型と文字列の操作","topics":["プリミティブ型・リテラル・変数の初期値・スコープ・var","StringとStringBuilder、不変性、==とequals、文字列プール","文字列の各種メソッド・テキストブロック","配列・多次元配列・clone、ArrayList・Arrays.asList・List.of"],"understanding":null},
+                          {"chapter":3,"title":"演算子と制御構造","topics":["拡大・縮小変換、演算時の型昇格、複合代入","前置・後置、評価順序、短絡評価、ビット演算・シフト","if・switch文と式・フォールスルー・yield","while・do-while・for・拡張for、break・continue・ラベル"],"understanding":null},
+                          {"chapter":4,"title":"クラスの定義とインスタンスの使用","topics":["参照型・static・フィールド・ローカル変数・値渡し","オーバーロード・可変長引数・戻り値","コンストラクタ・this・super・初期化順序・GC","instanceofのパターンマッチングと有効範囲","レコードの構成要素・アクセサー・標準／コンパクトコンストラクタ"],"understanding":null},
+                          {"chapter":5,"title":"継承とインタフェースの使用","topics":["継承・抽象クラス・ポリモーフィズム・キャスト","オーバーライドとオーバーロード、戻り値とチェック例外の制約","アクセス修飾子、フィールドとstaticメソッドの隠蔽","インタフェースのabstract・default・static・privateメソッド","sealed・permits・non-sealedによる継承制御"],"understanding":null},
+                          {"chapter":6,"title":"例外処理","topics":["Throwable・Exception・RuntimeException・Errorの分類","チェック例外の処理義務、throw・throws、catchの順序・マルチキャッチ","returnとfinallyの実行順序、戻り値・例外の上書き","try-with-resources・AutoCloseable・逆順クローズ・抑制された例外","NullPointerException・ClassCastExceptionなどの発生条件"],"understanding":null},
+                          {"chapter":7,"title":"模擬問題①","topics":["継承とコンストラクタ、ポリモーフィズムとオーバーロードの組み合わせ","defaultメソッドの競合、Stringと==の判定","多次元配列と二重ループ、例外・finally・自動クローズの順序","パッケージ・クラスパスを含む第1〜6章の横断確認"],"understanding":null},
+                          {"chapter":8,"title":"模擬問題②","topics":["オートボクシング・アンボクシング・ラッパー型の比較","オーバーロード解決とvarの型推論","レコードと可変コレクション、配列のcloneと参照の共有","拡張forと参照型、同名変数とスコープ","コンパイル可否 → 実行経路 → 実行時例外 → 最終結果の確認"],"understanding":null}
+                        ]
                         """;
                 send(exchange, 200, "application/json", json.getBytes(StandardCharsets.UTF_8));
                 return;
